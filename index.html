@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Demo Form</title>
+<style>
+    html {
+        scroll-behavior: smooth; /* Added for smooth scrolling */
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        color: navy;
+        padding: 20px;
+    }
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border: 4px solid navy;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 100%;
+        max-height: 80vh; /* Added for vertical scrolling */
+        overflow-y: auto; /* Added for vertical scrolling */
+        margin: 0 auto; /* Added to center the container horizontally */
+    }
+    .anchor-link {
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: bold;
+        text-align: center;
+    }
+    header {
+        background-color: #00008B; /* Dark blue banner */
+        color: #ffffcc; /* Soft yellow text */
+        text-align: center;
+        font-size: 1.7em;
+        font-weight: bold;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        /* Flexbox for vertical alignment of header content */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .header-link-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+        font-size: 0.7em; /* Smaller font size for the link */
+    }
+    .header-link-container a {
+        color: #ffffcc; /* Soft yellow to match header text */
+        font-weight: bold;
+        text-decoration: none;
+    }
+    .animated-emoji {
+        font-size: 1.2em; /* Adjusted size to match the link text */
+        animation: slide-right 2s infinite ease-in-out;
+        display: inline-block;
+    }
+    @keyframes slide-right {
+        0% { transform: translateX(0); }
+        50% { transform: translateX(10px); }
+        100% { transform: translateX(0); }
+    }
+    label {
+        display: block;
+        margin: 15px 0 5px;
+    }
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    textarea {
+        resize: vertical;
+    }
+    .submit-btn {
+        background-color: navy;
+        color: #fff;
+        padding: 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+        width: 100%;
+    }
+    .submit-btn:hover {
+        background-color: #003366;
+    }
+    .rocking-emoji {
+        display: block;
+        margin: 20px auto;
+        font-size: 50px;
+        animation: rock 2s infinite alternate;
+    }
+    @keyframes rock {
+        0% { transform: rotate(-10deg); }
+        50% { transform: rotate(10deg); }
+        100% { transform: rotate(-10deg); }
+    }
+    /* Styles for the modal pop-up */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 2px solid navy;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+    }
+    /* Styles for the new URL input and the displayed issue */
+    .url-input-container {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+    }
+    .url-prefix {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-right: none;
+        padding: 10px;
+        border-radius: 5px 0 0 5px;
+        font-family: monospace;
+        color: #555;
+        white-space: nowrap;
+    }
+    .url-input-container input {
+        border-radius: 0 5px 5px 0;
+    }
+    .selected-issue {
+        background-color: #e6e6f2; /* A light, visible background */
+        border: 1px dashed navy;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+        display: none; /* Initially hidden */
+    }
+    .disclaimer {
+        font-size: 0.8em;
+        color: #555;
+        margin-top: 20px;
+        text-align: center;
+    }
+    /* New styles for the checkbox group */
+    .checkbox-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .checkbox-group label {
+        display: inline-flex;
+        align-items: center;
+        margin: 5px 0;
+    }
+    /* Styles for the tooltip on hover */
+    .tooltip-container {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        border-bottom: 1px dashed navy;
+    }
+    .tooltip-text {
+        visibility: hidden;
+        width: 250px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -125px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .tooltip-container:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+    }
+</style>
+</head>
+<body>
+<div class="anchor-link">
+    <a href="#fill-form">Start Application</a>
+</div>
+
+<div class="form-container">
+    <div class="rocking-emoji">😀</div>
+    <header>
+        Please fill out this form so I can better understand your needs for the free demo
+        <div class="header-link-container">
+            <a href="https://www.thewebswan.com" target="_blank">Click here to view my website:</a>
+            <span class="animated-emoji">🎯</span>
+        </div>
+    </header>
+<form id="fill-form" action="https://formspree.io/f/mjkrjpvb" method="POST"><label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" name="phone">
+
+        <label for="business_name">Name of Business</label>
+        <input type="text" id="business_name" name="business_name">
+
+        <label for="business">What's your business?</label>
+        <select id="business" name="business" onchange="toggleOtherBusiness(this)" required>
+            <option value="">Select Your Business</option>
+            <option value="doctor">Doctor</option>
+            <option value="lawyer">Lawyer</option>
+            <option value="real_estate_broker">Real Estate Broker</option>
+            <option value="mortgage_broker">Mortgage Broker</option>
+            <option value="cosmetic_surgeon">Cosmetic Surgeon</option>
+            <option value="chiropractor">Chiropractor</option>
+            <option value="beautician">Beautician</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="hairdresser">Hairdresser</option>
+            <option value="high_tech">High-tech</option>
+            <option value="entrepreneur">Entrepreneur</option>
+            <option value="writer">Writer</option>
+            <option value="construction">Construction</option>
+            <option value="other">Other</option>
+        </select>
+        <div id="otherBusinessDiv" style="display:none;">
+            <label for="other_business_text">Please specify your business (max 50 words)</label>
+            <textarea id="other_business_text" name="other_business_text" maxlength="300" placeholder="Enter your business..."></textarea>
+        </div>
+
+        <label for="has_website">Do you already have a website?</label>
+        <select id="has_website" name="has_website" onchange="toggleWebsiteSections(this)">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+        </select>
+
+        <div id="websiteSection" style="display:none;">
+            <label for="website_url">Website URL</label>
+            <div class="url-input-container">
+                <span class="url-prefix">https://www.</span>
+                <input type="text" id="website_url" name="website_url">
+            </div>
+
+            <label for="interest">What are you interested in?</label>
+            <select id="interest" name="interest" onchange="toggleWebAnalysis(this)">
+                <option value="free_demo">A free demo</option>
+                <option value="web_analysis">A free web analysis</option>
+            </select>
+
+            <div id="selectedIssueDisplay" class="selected-issue" onclick="showWebAnalysisModal()"></div>
+        </div>
+        
+        <label for="city">What city is your business located?</label>
+        <input type="text" id="city" name="city">
+
+        <label for="state">What state?</label>
+        <select id="state" name="state">
+            <option value="">Select a State</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">District Of Columbia</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+        </select>
+
+        <label for="contact_time">What is the best time to contact you?</label>
+        <select id="contact_time" name="contact_time">
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="evening">Evening</option>
+        </select>
+
+        <label for="time_zone">What is your time zone?</label>
+        <select id="time_zone" name="time_zone">
+            <option value="pacific">Pacific</option>
+            <option value="eastern">Eastern Standard Time</option>
+            <option value="mountain">Mountain</option>
+            <option value="central">Central</option>
+        </select>
+
+        <label for="contact_method">What is the best way to contact you?</label>
+        <select id="contact_method" name="contact_method">
+            <option value="call">Call</option>
+            <option value="text">Text</option>
+            <option value="email">Email</option>
+        </select>
+        
+        <label for="logo">Do you need a logo?</label>
+        <select id="logo" name="logo">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="qr">Do you need a QR code?</label>
+        <select id="qr" name="qr">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+        
+        <label for="reputation" class="tooltip-container">
+            Do you need reputation management?
+            <span class="tooltip-text">
+                Reputation management helps you monitor and influence how your business is perceived online. It's about protecting and improving your brand's reputation to attract more customers.
+            </span>
+        </label>
+        <select id="reputation" name="reputation">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="ad_campaign" class="tooltip-container">
+            Do you need ad campaign marketing?
+            <span class="tooltip-text">
+                Ad campaign marketing (including video marketing) is a powerful way to reach new audiences and drive sales. We can create targeted ads to grow your business online.
+            </span>
+        </label>
+        <select id="ad_campaign" name="ad_campaign">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+
+        <label for="brand_color">Brand Color/Theme (Choose up to 3 colors)</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="brand_color" value="red" onclick="checkColorLimit()"> Red</label>
+            <label><input type="checkbox" name="brand_color" value="white" onclick="checkColorLimit()"> White</label>
+            <label><input type="checkbox" name="brand_color" value="blue" onclick="checkColorLimit()"> Blue</label>
+            <label><input type="checkbox" name="brand_color" value="yellow" onclick="checkColorLimit()"> Yellow</label>
+            <label><input type="checkbox" name="brand_color" value="green" onclick="checkColorLimit()"> Green</label>
+            <label><input type="checkbox" name="brand_color" value="orange" onclick="checkColorLimit()"> Orange</label>
+            <label><input type="checkbox" name="brand_color" value="purple" onclick="checkColorLimit()"> Purple</label>
+            <label><input type="checkbox" name="brand_color" value="lavender" onclick="checkColorLimit()"> Lavender</label>
+            <label><input type="checkbox" name="brand_color" value="beige" onclick="checkColorLimit()"> Beige</label>
+            <label><input type="checkbox" name="brand_color" value="off_white" onclick="checkColorLimit()"> Off White</label>
+            <label><input type="checkbox" name="brand_color" value="silver" onclick="checkColorLimit()"> Silver</label>
+            <label><input type="checkbox" name="brand_color" value="grey" onclick="checkColorLimit()"> Grey</label>
+            <label><input type="checkbox" name="brand_color" value="black" onclick="checkColorLimit()"> Black</label>
+            <label><input type="checkbox" name="brand_color" value="gold" onclick="checkColorLimit()"> Gold</label>
+            <label><input type="checkbox" name="brand_color" value="rainbow" onclick="checkColorLimit()"> Rainbow</label>
+            <label><input type="checkbox" name="brand_color" value="other" id="otherColorCheckbox" onclick="toggleOtherColor()"> Other</label>
+        </div>
+        <div id="customColorDiv" style="display:none;">
+            <label for="custom_color_text">Describe your custom color/theme (max 20 words)</label>
+            <textarea id="custom_color_text" name="custom_color_text" oninput="checkWordCount(this, 20)"></textarea>
+        </div>
+
+        <label for="comments">Additional Comments (max 500 words)</label>
+        <textarea id="comments" name="comments" rows="6" maxlength="3000" placeholder="Enter any additional details or comments here..."></textarea>
+
+        <label for="budget">If you decide to move forward, what is your budget?</label>
+        <select id="budget" name="budget">
+            <option value="799">$799</option>
+            <option value="1299">$1,299</option>
+            <option value="1599">$1,599</option>
+            <option value="1899">$1,899</option>
+            <option value="3899">$3,899</option>
+            <option value="7999">$7,999</option>
+        </select>
+
+        <button type="submit" class="submit-btn">Submit</button>
+        
+        <p class="disclaimer">
+            We are collecting your information for the purpose of designing a free demo or performing a web analysis for your existing website. We won't sell or share your information with third party. For our privacy policy, please click the link <a href="https://www.webswandigitalsolutions.com/privacy-policy" target="_blank">here</a>.
+        </p>
+
+        <div id="webAnalysisModal" class="modal-overlay" style="display:none;">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <p>What kind of issues are you encountering with your current website?</p>
+                <select id="web_issues" name="web_issues" onchange="handleIssueSelection(this)">
+                    <option value="">Select an issue</option>
+                    <option value="outdated">It is outdated</option>
+                    <option value="not_ranking">It is not ranking organically on search engines</option>
+                    <option value="not_optimized">It is not SEO optimized</option>
+                    <option value="not_properly_optimized">It is not optimized properly</option>
+                    <option value="template_website">It is a template website</option>
+                    <option value="dont_like_website">I don't like my website</option>
+                    <option value="branding">It is not displaying my branding properly</option>
+                    <option value="slow_load">It is slow to load</option>
+                    <option value="broken_links">It has broken links</option>
+                    <option value="not_encrypted">It is not encrypted</option>
+                    <option value="suspended">It was suspended/de-indexed</option>
+                    <option value="no_cookies">It doesn't have cookies</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <div id="otherIssueDiv" style="display:none;">
+                    <label for="other_issue_text">Please explain your issue (max 300 words)</label>
+                    <textarea id="other_issue_text" name="other_issue_text" maxlength="300"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Smooth scroll and form validation functions
+    function scrollToNextElement(currentElement) {
+        const formElements = Array.from(document.querySelectorAll('#fill-form input, #fill-form select, #fill-form textarea'));
+        const currentIndex = formElements.indexOf(currentElement);
+        let nextElement = null;
+        for (let i = currentIndex + 1; i < formElements.length; i++) {
+            const el = formElements[i];
+            if (el.offsetParent !== null) {
+                nextElement = el;
+                break;
+            }
+        }
+        if (nextElement) {
+            nextElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            nextElement.focus();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const formFields = document.querySelectorAll('#fill-form input, #fill-form select, #fill-form textarea');
+        formFields.forEach(field => {
+            if (field.tagName === 'SELECT' || field.type === 'radio' || field.type === 'checkbox') {
+                field.addEventListener('change', (e) => scrollToNextElement(e.target));
+            } else {
+                field.addEventListener('blur', (e) => scrollToNextElement(e.target));
+            }
+        });
+    });
+
+    // Original functions
+    function toggleCustomColor(select) {
+        document.getElementById('customColorDiv').style.display = (select.value === 'other') ? 'block' : 'none';
+    }
+    function toggleOtherBusiness(select) {
+        document.getElementById('otherBusinessDiv').style.display = (select.value === 'other') ? 'block' : 'none';
+    }
+    function toggleWebsiteSections(select) {
+        document.getElementById('websiteSection').style.display = (select.value === 'yes') ? 'block' : 'none';
+        if (select.value === 'no') {
+            document.getElementById('interest').value = 'free_demo';
+            document.getElementById('webAnalysisModal').style.display = 'none';
+            document.getElementById('selectedIssueDisplay').style.display = 'none';
+        }
+    }
+    function toggleWebAnalysis(select) {
+        if (select.value === 'web_analysis') {
+            showWebAnalysisModal();
+        } else {
+            document.getElementById('webAnalysisModal').style.display = 'none';
+            document.getElementById('selectedIssueDisplay').style.display = 'none';
+        }
+    }
+    function showWebAnalysisModal() {
+        document.getElementById('webAnalysisModal').style.display = 'flex';
+    }
+    function handleIssueSelection(select) {
+        const selectedIssueDisplay = document.getElementById('selectedIssueDisplay');
+        const selectedText = select.options[select.selectedIndex].text;
+        const selectedValue = select.value;
+        document.getElementById('otherIssueDiv').style.display = 'none';
+        if (selectedValue === 'other') {
+            document.getElementById('otherIssueDiv').style.display = 'block';
+        } else if (selectedValue !== '') {
+            selectedIssueDisplay.innerHTML = `**Issue:** ${selectedText}`;
+            selectedIssueDisplay.style.display = 'block';
+            document.getElementById('webAnalysisModal').style.display = 'none';
+        } else {
+            selectedIssueDisplay.style.display = 'none';
+        }
+    }
+    function closeModal() {
+        document.getElementById('webAnalysisModal').style.display = 'none';
+        const interestDropdown = document.getElementById('interest');
+        if (interestDropdown.value === 'web_analysis') {
+            interestDropdown.value = 'free_demo';
+            document.getElementById('selectedIssueDisplay').style.display = 'none';
+        }
+    }
+    function checkColorLimit() {
+        const checkboxes = document.querySelectorAll('input[name="brand_color"]:not(#otherColorCheckbox)');
+        let checkedCount = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                checkedCount++;
+            }
+        });
+        if (checkedCount >= 3) {
+            checkboxes.forEach(cb => {
+                if (!cb.checked) {
+                    cb.disabled = true;
+                }
+            });
+        } else {
+            checkboxes.forEach(cb => {
+                cb.disabled = false;
+            });
+        }
+    }
+    function toggleOtherColor() {
+        const otherCheckbox = document.getElementById('otherColorCheckbox');
+        const customColorDiv = document.getElementById('customColorDiv');
+        if (otherCheckbox.checked) {
+            customColorDiv.style.display = 'block';
+        } else {
+            customColorDiv.style.display = 'none';
+        }
+    }
+    function checkWordCount(textarea, maxWords) {
+        const words = textarea.value.trim().split(/\s+/);
+        if (words.length > maxWords) {
+            const trimmed = words.slice(0, maxWords).join(' ');
+            textarea.value = trimmed;
+        }
+    }
+</script>
+</body>
+</html>
